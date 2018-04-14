@@ -25,7 +25,6 @@ class LRU {
 
   set(p) {
     return new Promise((resolve, reject) => {
-      console.log("setting item", p.key, p.data);
       this.cache.set(p.key, p.data);
       resolve(true);
     });
@@ -33,8 +32,9 @@ class LRU {
 
   delete(p) {
     return new Promise((resolve, reject) => {
+      const has = this.cache.has(p.key);
       this.cache.del(p.key);
-      resolve(false);
+      resolve(has);
     });
   }
 
