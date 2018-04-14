@@ -1,5 +1,5 @@
 const DynamoMC = require("../backends/dynamoMC");
-const MC = require("../memCachedServer");
+const MC = require("../memcachedproxy");
 const Memcached = require("memcached");
 const Net = require("net");
 // server config
