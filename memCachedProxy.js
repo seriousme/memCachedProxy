@@ -36,7 +36,8 @@ const Cmds = {
       ["N", "exptime"],
       ["N", "bytes"],
       ["B", "noreply"]
-    ]
+    ],
+    answers: { true: "STORED", false: "NOT_STORED" }
   },
   cas: {
     regex: /^(cas) ([^ \r\n]+) ([0-9]+) ([0-9]+) ([0-9]+) ([^ \r\n]+)( noreply)?\r\n/,
@@ -51,7 +52,8 @@ const Cmds = {
   },
   delete: {
     regex: /^(delete) ([^ \r\n]+)( noreply)?\r\n/,
-    params: [["S", "key"]]
+    params: [["S", "key"]],
+    answers: { true: "DELETED", false: "NOT_FOUND" }
   },
   stats: {
     regex: /^(stats)(?: ([^\r\n]+))\r\n/,
@@ -71,11 +73,13 @@ const Cmds = {
   },
   incr: {
     regex: /^(incr|decr) ([^ \r\n]+) ([0-9]+)( noreply)?\r\n/,
-    params: [["S", "key"], ["N", "value"]]
+    params: [["S", "key"], ["N", "value"]],
+    answers: { false: "NOT_FOUND" }
   },
   touch: {
     regex: /^(touch) ([^ \r\n]+) ([0-9]+)( noreply)?\r\n/,
-    params: [["S", "key"], ["N", "exptime"]]
+    params: [["S", "key"], ["N", "exptime"]],
+    answers: { true: "TOUCHED", false: "NOT_FOUND" }
   },
   version: {
     regex: /^version\r\n/,
@@ -97,12 +101,16 @@ class MemCachedServer {
 
   _executeCmd(req, res) {
     const noreply = req.params.noreply;
+    const answers = Cmds[req.cmd].answers;
     this.config.Backend[req.cmd](req.params)
       .then(result => {
         res.log("DEBUG", result);
         if (!noreply) {
           if (typeof result === "boolean") {
-            result = "STORED";
+            if (answers) {
+              result = answers[result];
+            }
+            res.log("DEBUG", result);
             res.writeLine(result);
           } else if (typeof result === "object") {
             result.forEach(item => res.writeData(item));
