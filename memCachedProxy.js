@@ -16,6 +16,18 @@ const Cmds = {
     regex: /^(get) ([^\r\n]+)\r\n/,
     params: [["A", "keys"]]
   },
+  gets: {
+    regex: /^(gets) ([^\r\n]+)\r\n/,
+    params: [["A", "keys"]]
+  },
+  gat: {
+    regex: /^(gat) ([^\r\n]+)\r\n/,
+    params: [["A", "keys"]]
+  },
+  gats: {
+    regex: /^(gats) ([^\r\n]+)\r\n/,
+    params: [["A", "keys"]]
+  },
   set: {
     regex: /^(set|add|replace|append|prepend) ([^ \r\n]+) ([0-9]+) ([0-9]+) ([0-9]+)( noreply)?\r\n/,
     params: [
@@ -26,33 +38,44 @@ const Cmds = {
       ["B", "noreply"]
     ]
   },
+  cas: {
+    regex: /^(cas) ([^ \r\n]+) ([0-9]+) ([0-9]+) ([0-9]+) ([^ \r\n]+)( noreply)?\r\n/,
+    params: [
+      ["S", "key"],
+      ["N", "flags"],
+      ["N", "exptime"],
+      ["N", "bytes"],
+      ["S", "cas"],
+      ["B", "noreply"]
+    ]
+  },
   delete: {
-    regex: /^delete ([^ \r\n]+)(?: [0-9]+)?( noreply)?\r\n/,
-    params: [["S", "key"], ["N", "flags"]]
+    regex: /^(delete) ([^ \r\n]+)( noreply)?\r\n/,
+    params: [["S", "key"]]
   },
   stats: {
-    regex: /^stats(?: ([^\r\n]+))\r\n/,
-    params: [["S", "key"], ["N", "flags"]]
+    regex: /^(stats)(?: ([^\r\n]+))\r\n/,
+    params: [["S", "args"]]
   },
   quit: {
     regex: /^quit\r\n/,
-    params: [["S", "key"], ["N", "flags"]]
+    params: []
   },
   verbosity: {
-    regex: /^verbosity ([0-9]+)( noreply)?\r\n/,
-    params: [["S", "key"], ["N", "flags"]]
+    regex: /^(verbosity) ([0-9]+)( noreply)?\r\n/,
+    params: [["N", "level"]]
   },
   flush_all: {
-    regex: /^flush_all(?: ([0-9]+))( noreply)?\r\n/,
-    params: [["S", "key"], ["N", "flags"]]
+    regex: /^(flush_all)(?: ([0-9]+))( noreply)?\r\n/,
+    params: [["N", "exptime"]]
   },
   incr: {
     regex: /^(incr|decr) ([^ \r\n]+) ([0-9]+)( noreply)?\r\n/,
-    params: [["S", "key"], ["N", "flags"]]
+    params: [["S", "key"], ["N", "value"]]
   },
   touch: {
-    regex: /^touch ([^ \r\n]+) ([0-9]+)( noreply)?\r\n/,
-    params: [["S", "key"], ["N", "flags"]]
+    regex: /^(touch) ([^ \r\n]+) ([0-9]+)( noreply)?\r\n/,
+    params: [["S", "key"], ["N", "exptime"]]
   },
   version: {
     regex: /^version\r\n/,
@@ -134,12 +157,12 @@ class MemCachedServer {
             req.raw.consume(data[0].length);
             this._parseParams(req, res, CmdData, data.slice(2));
           } else {
-            res.error("CLIENT ERROR");
+            res.error("CLIENT_ERROR");
             req.raw.consume(matched[0].length);
             req.reset();
           }
         } else {
-          res.error(`SERVER ERROR command ${Cmd} not implemented in backend`);
+          res.error(`SERVER_ERROR command ${Cmd} not implemented in backend`);
           req.raw.consume(matched[0].length);
           req.reset();
         }
