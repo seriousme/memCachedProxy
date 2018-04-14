@@ -1,4 +1,4 @@
-const DynamoMC = require("./backends/dynamoMC");
+const DynamoDB = require("./backends/DynamoDB");
 const MemCachedServer = require("./memCachedProxy");
 
 const Net = require("net");
@@ -15,7 +15,7 @@ const AWSregion = "eu-west-1";
 const server = Net.createServer(
   MemCachedServer({
     MaxRequestSize,
-    Backend: DynamoMC({
+    Backend: DynamoDB({
       Table,
       KeyAttr,
       ValueAttr,

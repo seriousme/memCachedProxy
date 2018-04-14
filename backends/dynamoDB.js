@@ -8,7 +8,7 @@ const Config = {
   Version: 1
 };
 
-class DynamoMC {
+class DynamoDB {
   constructor(cfg) {
     this.config = Object.assign(Config, cfg);
     AWS.config.update({
@@ -93,5 +93,5 @@ class DynamoMC {
   }
 }
 
-module.exports = config => new DynamoMC(config);
-module.exports.DynamoMC = DynamoMC;
+module.exports = config => new DynamoDB(config);
+module.exports.DynamoDB = DynamoDB;

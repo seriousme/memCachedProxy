@@ -1,4 +1,4 @@
-const DynamoMC = require("../backends/dynamoMC");
+const DynamoDB = require("../backends/dynamoDB");
 const MC = require("../memcachedproxy");
 const Memcached = require("memcached");
 const Net = require("net");
@@ -14,12 +14,12 @@ const AWSregion = "eu-west-1";
 
 const test = require("tap").test;
 
-test("test can use DynamoMC with memcache driver!", function(t) {
+test("test can use DynamoDB with memcache driver!", function(t) {
   const server = Net.createServer(
     MC({
       MaxRequestSize,
       Logger,
-      Backend: DynamoMC({
+      Backend: DynamoDB({
         Table,
         KeyAttr,
         ValueAttr,
