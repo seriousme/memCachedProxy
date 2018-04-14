@@ -53,8 +53,9 @@ class DynamoMC {
       });
     });
   }
-
+  // the memcached commands
   get(p) {
+    // translate single request into multiple promises, 1 for each key to get
     const Proms = p.keys.map(item => {
       const Params = {
         TableName: this.config.Table
