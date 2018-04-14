@@ -15,6 +15,7 @@
   "dependencies": {
     "aws-sdk": "^2.220.1",
     "bl": "^1.2.2",
+    "lru-cache": "^4.1.2",
     "memcached": "^2.2.2",
     "nodemon": "^1.17.3",
     "tap": "^11.1.3"
