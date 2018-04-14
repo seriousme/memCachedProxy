@@ -73,18 +73,8 @@ class MemCachedServer {
   }
 
   _executeCmd(req, res) {
-    let prom;
     const noreply = req.params.noreply;
-    if (req.cmd === "get" || req.cmd === "gets") {
-      let Proms = req.params.keys.map(item =>
-        this.config.Backend[req.cmd]({ key: item })
-      );
-      prom = Promise.all(Proms);
-    } else {
-      prom = this.config.Backend[req.cmd](req.params);
-    }
-
-    prom
+    this.config.Backend[req.cmd](req.params)
       .then(result => {
         res.log("DEBUG", result);
         if (!noreply) {

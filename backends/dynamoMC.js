@@ -55,12 +55,15 @@ class DynamoMC {
   }
 
   get(p) {
-    const Params = {
-      TableName: this.config.Table
-    };
-    Params.Key = {};
-    Params.Key[this.config.KeyAttr] = p.key;
-    return this._request("get", Params);
+    const Proms = p.keys.map(item => {
+      const Params = {
+        TableName: this.config.Table
+      };
+      Params.Key = {};
+      Params.Key[this.config.KeyAttr] = item;
+      return this._request("get", Params);
+    });
+    return Promise.all(Proms);
   }
 
   set(p) {
