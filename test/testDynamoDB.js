@@ -14,7 +14,7 @@ const AWSregion = "eu-west-1";
 
 const test = require("tap").test;
 
-test("test can use with memcache driver!", function(t) {
+test("test can use DynamoMC with memcache driver!", function(t) {
   const server = Net.createServer(
     MC({
       MaxRequestSize,
@@ -23,7 +23,8 @@ test("test can use with memcache driver!", function(t) {
         Table,
         KeyAttr,
         ValueAttr,
-        AWSregion
+        AWSregion,
+        Logger
       })
     })
   );
@@ -38,10 +39,13 @@ test("test can use with memcache driver!", function(t) {
         t.ok(!err, "get should not have error");
         t.equals(value, v, "should return the correct value");
 
-        memcached.end();
-        server.close();
+        memcached.del("a", function(err, value) {
+          t.ok(!err, "delete should not have error");
+          memcached.end();
+          server.close();
 
-        t.end();
+          t.end();
+        });
       });
     });
   });

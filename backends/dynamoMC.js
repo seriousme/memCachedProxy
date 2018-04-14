@@ -77,6 +77,15 @@ class DynamoMC {
     return this._request("put", Params);
   }
 
+  delete(p) {
+    const Params = {
+      TableName: Config.Table
+    };
+    Params.Key = {};
+    Params.Key[this.config.KeyAttr] = p.key;
+    return this._request("delete", Params);
+  }
+
   version() {
     return new Promise((resolve, reject) => {
       resolve(this.config.Version);
