@@ -73,33 +73,36 @@ class MemCachedServer {
   }
 
   _executeCmd(req, res) {
+    let prom;
+    const noreply = req.params.noreply;
     if (req.cmd === "get" || req.cmd === "gets") {
       let Proms = req.params.keys.map(item =>
         this.config.Backend[req.cmd]({ key: item })
       );
-      Promise.all(Proms)
-        .then(result => {
-          res.log("DEBUG", result);
-          result.forEach(item => res.writeData(item));
-          res.writeLine("END");
-        })
-        .catch(e => {
-          res.error(e);
-        });
+      prom = Promise.all(Proms);
     } else {
-      this.config.Backend[req.cmd](req.params)
-        .then(result => {
-          console.log("result", result, result.length);
-          if (!result.length) {
-            result = "STORED";
-          }
-          res.log("DEBUG", result);
-          res.writeLine(result);
-        })
-        .catch(e => {
-          res.error(e);
-        });
+      prom = this.config.Backend[req.cmd](req.params);
     }
+
+    prom
+      .then(result => {
+        res.log("DEBUG", result);
+        if (!noreply) {
+          if (typeof result === "boolean") {
+            result = "STORED";
+            res.writeLine(result);
+          } else if (typeof result === "object") {
+            result.forEach(item => res.writeData(item));
+            res.writeLine("END");
+          } else {
+            res.writeLine(result);
+          }
+        }
+      })
+      .catch(result => {
+        res.log("DEBUG", result);
+        if (!noreply) res.writeLine("NOT STORED");
+      });
   }
 
   _cleanUp(req, res) {
