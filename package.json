@@ -1,0 +1,21 @@
+{
+  "name": "memcachedproxy",
+  "version": "0.0.1",
+  "description": "a memcached server with a DynamoDB backend",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.220.1",
+    "bl": "^1.2.2",
+    "memcached": "^2.2.2",
+    "nodemon": "^1.17.3",
+    "tap": "^11.1.3"
+  }
+}
