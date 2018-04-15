@@ -13,10 +13,10 @@ const Version = 2;
 const test = require("tap").test;
 
 const v = Date.now().toString();
-var server;
-var memcached;
+let server;
+let memcached;
 
-test("starting server", function(t) {
+test("starting server", t => {
   server = Net.createServer(
     MC({
       MaxRequestSize,
@@ -28,50 +28,50 @@ test("starting server", function(t) {
       })
     })
   );
-  server.listen(0, function() {
+  server.listen(0, () => {
     memcached = new Memcached("localhost:" + server.address().port);
     t.end();
   });
 });
 
-test("get non-existing key", function(t) {
-  memcached.get("a", function(err, value) {
+test("get non-existing key", t => {
+  memcached.get("a", (err, value) => {
     t.ok(!err, "get should not return an error");
     t.end();
   });
 });
 
-test("set", function(t) {
-  memcached.set("a", v, 1, function(err) {
+test("set", t => {
+  memcached.set("a", v, 1, err => {
     t.ok(!err, "set should not return an error");
     t.end();
   });
 });
 
-test("get", function(t) {
-  memcached.get("a", function(err, value) {
+test("get", t => {
+  memcached.get("a", (err, value) => {
     t.ok(!err, "get should not return an error");
     t.equals(value, v, "should return the correct value");
     t.end();
   });
 });
 
-test("delete", function(t) {
-  memcached.del("a", function(err) {
+test("delete", t => {
+  memcached.del("a", err => {
     t.ok(!err, "delete should not return a error");
     t.end();
   });
 });
 
-test("version", function(t) {
-  memcached.version(function(err, value) {
+test("version", t => {
+  memcached.version((err, value) => {
     t.ok(!err, "version should not return a error");
     t.equals(value[0], Version, "should return the correct value");
     t.end();
   });
 });
 
-test("teardown", function(t) {
+test("teardown", t => {
   memcached.end();
   server.close();
   t.end();
