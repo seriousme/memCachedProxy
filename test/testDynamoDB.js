@@ -11,11 +11,16 @@ const Table = "userData";
 const KeyAttr = "userId";
 const ValueAttr = "pwd";
 const AWSregion = "eu-west-1";
+const Version = 2;
 
 const test = require("tap").test;
 
-test("test can use DynamoDB with memcache driver!", function(t) {
-  const server = Net.createServer(
+const v = Date.now().toString();
+var server;
+var memcached;
+
+test("starting server", function(t) {
+  server = Net.createServer(
     MC({
       MaxRequestSize,
       Logger,
@@ -24,29 +29,56 @@ test("test can use DynamoDB with memcache driver!", function(t) {
         KeyAttr,
         ValueAttr,
         AWSregion,
-        Logger
+        Logger,
+        Version
       })
     })
   );
   server.listen(0, function() {
-    var memcached = new Memcached("localhost:" + server.address().port);
-
-    var v = Date.now().toString();
-    memcached.set("a", v, 1, function(err, data) {
-      t.ok(!err, "set should not have error");
-
-      memcached.get("a", function(err, value) {
-        t.ok(!err, "get should not have error");
-        t.equals(value, v, "should return the correct value");
-
-        memcached.del("a", function(err, value) {
-          t.ok(!err, "delete should not have error");
-          memcached.end();
-          server.close();
-
-          t.end();
-        });
-      });
-    });
+    memcached = new Memcached("localhost:" + server.address().port);
+    t.end();
   });
+});
+
+test("get non-existing key", function(t) {
+  memcached.get("a", function(err, value) {
+    t.ok(!err, "get should not return an error");
+    t.end();
+  });
+});
+
+test("set", function(t) {
+  memcached.set("a", v, 1, function(err) {
+    t.ok(!err, "set should not return an error");
+    t.end();
+  });
+});
+
+test("get", function(t) {
+  memcached.get("a", function(err, value) {
+    t.ok(!err, "get should not return an error");
+    t.equals(value, v, "should return the correct value");
+    t.end();
+  });
+});
+
+test("delete", function(t) {
+  memcached.del("a", function(err) {
+    t.ok(!err, "delete should not return a error");
+    t.end();
+  });
+});
+
+test("version", function(t) {
+  memcached.version(function(err, value) {
+    t.ok(!err, "version should not return a error");
+    t.equals(value[0], Version, "should return the correct value");
+    t.end();
+  });
+});
+
+test("teardown", function(t) {
+  memcached.end();
+  server.close();
+  t.end();
 });
