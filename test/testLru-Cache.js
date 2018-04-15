@@ -15,6 +15,7 @@ test("test can use LRU-cache with memcache driver!", function(t) {
   const server = Net.createServer(
     MC({
       MaxRequestSize,
+      Logger,
       Backend: LRU({
         LruConfig,
         Logger
