@@ -8,7 +8,9 @@
   },
   "scripts": {
     "start": "node index.js",
-    "test": "tap test/*.js"
+    "test": "tap test/*.js",
+    "testCoverage": "tap test/*.js --cov",
+    "testCoverageHTML": "tap test/*.js  --coverage-report=html"
   },
   "author": "",
   "license": "MIT",
