@@ -11,9 +11,14 @@ const Config = {
 class DynamoDB {
   constructor(cfg) {
     this.config = Object.assign(Config, cfg);
+    if (!this.config.AWSendPoint) {
+      this.config.AWSendPoint = `https://dynamodb.${
+        this.config.AWSregion
+      }.amazonaws.com`;
+    }
     AWS.config.update({
       region: this.config.AWSregion,
-      endpoint: `https://dynamodb.${this.config.AWSregion}.amazonaws.com`
+      endpoint: this.config.AWSendPoint
     });
     this.DocClient = new AWS.DynamoDB.DocumentClient();
   }
