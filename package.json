@@ -15,12 +15,12 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.427.0",
+    "aws-sdk": "^2.480.0",
     "bl": "^3.0.0",
     "lru-cache": "^5.1.1",
     "memcached": "^2.2.2"
   },
   "devDependencies": {
-    "tap": "^12.6.1"
+    "tap": "^14.2.5"
   }
 }
